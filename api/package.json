@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Image proxy server for manga downloader",
   "dependencies": {
-    "jszip": "^3.10.1"
+    "jszip": "^3.10.1",
+    "pdf-lib": "^1.17.1"
   },
   "engines": {
     "node": "22.x"
