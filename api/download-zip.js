@@ -1,4 +1,4 @@
-javascriptconst JSZip = require('jszip');
+const JSZip = require('jszip');
 
 // Vercel Serverless Function
 export default async function handler(req, res) {
