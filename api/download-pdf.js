@@ -66,11 +66,18 @@ const handler = async (req, res) => {
                 let image;
                 const contentType = response.headers.get('content-type') || '';
                 
-                if (url.toLowerCase().endsWith('.png') || contentType.includes('png')) {
-                    image = await pdfDoc.embedPng(imageBuffer);
-                } else {
-                    // Alles andere als JPEG behandeln
+                try {
+                    // Zuerst versuchen als JPEG (funktioniert für die meisten Formate)
                     image = await pdfDoc.embedJpg(imageBuffer);
+                } catch (jpegError) {
+                    console.log(`JPEG embed failed for image ${i + 1}, trying PNG...`);
+                    try {
+                        // Falls JPEG fehlschlägt, als PNG versuchen
+                        image = await pdfDoc.embedPng(imageBuffer);
+                    } catch (pngError) {
+                        console.error(`Both JPEG and PNG embed failed for image ${i + 1}`);
+                        throw new Error('Unsupported image format (probably WebP)');
+                    }
                 }
 
                 // Neue Seite mit Bildgröße erstellen
