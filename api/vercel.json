@@ -1,0 +1,7 @@
+json{
+  "functions": {
+    "api/download-zip.js": {
+      "maxDuration": 30
+    }
+  }
+}
