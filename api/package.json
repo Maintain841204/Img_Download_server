@@ -1,4 +1,4 @@
-json{
+{
   "name": "image-downloader-proxy",
   "version": "1.0.0",
   "description": "Image proxy server for manga downloader",
