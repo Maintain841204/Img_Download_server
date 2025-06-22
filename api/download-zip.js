@@ -1,20 +1,28 @@
 const JSZip = require('jszip');
 
-// Vercel Serverless Function
-export default async function handler(req, res) {
+// CORS Middleware
+const allowCors = fn => async (req, res) => {
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    );
+    
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+    
+    return await fn(req, res);
+}
+
+// Main handler function
+const handler = async (req, res) => {
     // Nur POST erlauben
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
-    }
-
-    // CORS Headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-    // Handle preflight
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
     }
 
     try {
@@ -36,6 +44,10 @@ export default async function handler(req, res) {
                 const response = await fetch(url, {
                     headers: {
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                        'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+                        'Accept-Language': 'en-US,en;q=0.9',
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache',
                         'Referer': new URL(url).origin
                     }
                 });
@@ -89,6 +101,9 @@ export default async function handler(req, res) {
         });
     }
 }
+
+// Export mit CORS wrapper
+module.exports = allowCors(handler);
 
 // Vercel Config für größere Payloads
 export const config = {
